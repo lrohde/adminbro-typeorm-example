@@ -1,6 +1,6 @@
 import express from 'express';
 import AdminBro from 'admin-bro';
-import * as AdminBroExpress from '@admin-bro/express'
+import * as AdminBroExpress from '@admin-bro/express';
 import { Database, Resource } from '@admin-bro/typeorm';
 import { createConnection } from 'typeorm';
 import { validate } from 'class-validator';
@@ -21,7 +21,8 @@ AdminBro.registerAdapter({ Database, Resource });
     const AdminBroOptions = {
       resources: [
         {
-          resource: User, options: {
+          resource: User,
+          options: {
             parent: {
               name: 'Usuários'
             },
@@ -38,22 +39,22 @@ AdminBro.registerAdapter({ Database, Resource });
             },
             actions: {
               new: {
-                before: async (request) => {
+                before: async (request: AdminBroExpress.Request) => {
                   if(request.payload.password) {
                     request.payload = {
-                      ...request.payload,
+                      ...request,
                       encryptedPassword: await bcrypt.hash(request.payload.password, 10),
                       password: undefined,
                     }
                   }
                   return request
                 },
-                isAccessible: canModifyUsers
+                // isAccessible: canModifyUsers
               },
               edit: { isAccessible: canModifyUsers },
               delete: { isAccessible: canModifyUsers },
             }
-        } 
+        }
       }
       ],
       rootPath: '/admin',
@@ -64,7 +65,7 @@ AdminBro.registerAdapter({ Database, Resource });
     const app = express();
     
     const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
-      authenticate: async (email, password) => {
+      authenticate: async (email: string, password: string) => {
         const user = await User.findOne({ email })
         if (user) {
           const matched = await bcrypt.compare(password, user.encryptedPassword)

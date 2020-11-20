@@ -5,6 +5,7 @@
   "username": "postgres",
   "password": "docker",
   "database": "test",
+  "synchronize": true,
   "entities": [
     "./src/models/*.ts"
   ],

@@ -1,5 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
+export const UserSeed = {
+  name: "Usuário Teste",
+  email: 'admin@pdvmundo.com.br',
+  role: 'admin',
+  encryptedPassword: '$2b$10$xBl2on7dSZ.F.y4FlS2rrOB02lZuwloJ2gIVinf0qD2JAAHF6/rte',
+};
 export class CreateUsers1605639702908 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -19,6 +25,11 @@ export class CreateUsers1605639702908 implements MigrationInterface {
                 type: 'varchar',
                 isNullable: false,
                 isUnique: true,
+              },
+              {
+                name: 'name',
+                type: 'varchar',
+                isNullable: false,
               },
               {
                 name: 'encryptedPassword',
@@ -44,6 +55,14 @@ export class CreateUsers1605639702908 implements MigrationInterface {
             ]
         })
         );
+
+        await queryRunner
+          .manager
+          .createQueryBuilder()
+          .insert()
+          .into("users")
+          .values(UserSeed)
+          .execute()
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
